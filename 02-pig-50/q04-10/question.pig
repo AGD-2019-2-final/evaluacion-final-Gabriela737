@@ -49,5 +49,6 @@ a = LIMIT data2 10;
 b = ORDER a BY driverId, truckId, eventTime;
 c = FOREACH b GENERATE driverId, truckId, eventTime;
 DUMP c;
-STORE c INTO 'output'  USING PigStorage(',');
+STORE c INTO 'output' USING PigStorage(',');
 fs -copyToLocal output output;
+
