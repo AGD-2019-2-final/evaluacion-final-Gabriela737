@@ -30,6 +30,8 @@
 -- 
 fs -rm -f -r output;
 -- 
+fs -rm -f data.csv;
+fs -put data.csv;
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
         firstname:CHARARRAY, 
@@ -40,3 +42,8 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+formato = FOREACH u GENERATE ToDate(birthday,'yyyy-MM-dd') as date;
+selected = FOREACH formato GENERATE ToString(date, 'yyyy-MM-dd'),CASE ToString(date, 'MM') WHEN '01' THEN 'ene' WHEN '02' THEN 'feb' WHEN '03' THEN 'mar' WHEN '04' THEN 'abr' WHEN '05' THEN 'may' WHEN '06' THEN 'jun' WHEN '07' THEN 'jul' WHEN '08' THEN 'ago' WHEN '09' THEN 'sep' WHEN '10' THEN 'oct' WHEN '11' THEN 'nov' WHEN '12' THEN 'dic' END,ToString(date, 'MM'), GetMonth(date);
+DUMP selected;
+STORE selected INTO 'output' USING PigStorage(',');
+fs -copyToLocal output output;

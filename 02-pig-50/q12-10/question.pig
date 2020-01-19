@@ -33,3 +33,17 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+fs -rm -f data.csv;
+fs -put data.csv;
+u = LOAD 'data.csv' USING PigStorage(',')
+    AS (id:int,
+        firstname:CHARARRAY,
+        surname:CHARARRAY,
+        birthday:CHARARRAY,
+        color:CHARARRAY,
+        quantity:INT);
+filtro = FILTER u BY (SUBSTRING(surname, 0,1)) IN ('D','E','F','G','H','I','J','K');
+selected = FOREACH filtro GENERATE surname;
+DUMP selected;
+STORE selected INTO 'output';
+fs -copyToLocal output output;

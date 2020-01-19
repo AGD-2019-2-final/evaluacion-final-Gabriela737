@@ -26,4 +26,17 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
-
+fs -rm -f data.csv;
+fs -put data.csv;
+u = LOAD 'data.csv' USING PigStorage(',')
+    AS (id:int,
+        firstname:CHARARRAY,
+        surname:CHARARRAY,
+        birthday:CHARARRAY,
+        color:CHARARRAY,
+        quantity:INT);
+filtro = FILTER u BY color IN ('blue', 'black');
+selected = FOREACH filtro GENERATE firstname, color;
+DUMP selected;
+STORE selected INTO 'output' USING PigStorage(',');
+fs -copyToLocal output output;

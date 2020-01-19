@@ -27,5 +27,18 @@
 -- 
 fs -rm -f -r output;
 --
-
-
+fs -rm -f data.csv;
+fs -put data.csv;
+data = LOAD 'data.csv' USING PigStorage(',')
+    AS (
+        id: INT,
+        firstname: CHARARRAY,
+        lastname: CHARARRAY,
+        birthday: CHARARRAY,
+        color: CHARARRAY,
+        quantity: INT
+    );
+selected = FOREACH data GENERATE CONCAT(firstname, '@',lastname);
+DUMP selected;
+STORE selected INTO 'output' USING PigStorage(',');
+fs -copyToLocal output output;

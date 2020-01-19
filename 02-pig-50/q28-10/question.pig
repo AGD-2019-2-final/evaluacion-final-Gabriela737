@@ -19,6 +19,8 @@
 -- 
 fs -rm -f -r output;
 --
+fs -rm -f data.csv;
+fs -put data.csv;
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
         firstname:CHARARRAY, 
@@ -29,4 +31,8 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
-
+formato = FOREACH u GENERATE ToDate(birthday,'yyyy-MM-dd') as date;
+selected = FOREACH formato GENERATE ToString(date, 'yyyy'), ToString(date, 'yy');
+DUMP selected;
+STORE selected INTO 'output' USING PigStorage(',');
+fs -copyToLocal output output;

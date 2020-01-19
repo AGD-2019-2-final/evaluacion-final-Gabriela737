@@ -18,6 +18,8 @@
 -- 
 fs -rm -f -r output;
 -- 
+fs -rm -f data.csv;
+fs -put data.csv;
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
         firstname:CHARARRAY, 
@@ -28,4 +30,8 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
-
+filtro = FILTER u BY color MATCHES  '.*[aeiou]';
+selected = FOREACH filtro GENERATE firstname, color;
+DUMP selected;
+STORE selected INTO 'output' USING PigStorage(',') ;
+fs -copyToLocal output output;

@@ -26,3 +26,20 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+fs -rm -f data.csv;
+fs -put data.csv;
+data = LOAD 'data.csv' USING PigStorage(',')
+    AS (
+        id: INT,
+        firstname: CHARARRAY,
+        lastname: CHARARRAY,
+        birthday: CHARARRAY,
+        color: CHARARRAY,
+        quantity: INT
+    );
+selected = FOREACH data GENERATE lastname, SIZE(lastname) AS l;
+sort = ORDER selected BY l DESC, lastname;
+top = LIMIT sort 5;
+DUMP sort;
+STORE top INTO 'output' USING PigStorage(',');
+fs -copyToLocal output output
